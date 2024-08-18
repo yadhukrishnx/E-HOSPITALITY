@@ -1,0 +1,101 @@
+/* Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+
+/* Body Styles */
+body {
+  background-image: url("assets/images/hero-bg-2.jpg");
+  background-size: cover;
+  background-attachment: fixed;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* Heading Styles */
+h1 {
+  font-size: 2.5rem;
+}
+
+.section-container {
+  margin-top: 120px;
+}
+
+/* Responsive Heading Sizes */
+@media (min-width: 768px) {
+  h1 {
+    font-size: 3.5rem;
+  }
+  .section-container {
+    margin-top: 100px;
+  }
+}
+
+@media (min-width: 1200px) {
+  h1 {
+    font-size: 4rem;
+  }
+  .section-container {
+    margin-top: 130px;
+  }
+}
+
+@media (max-width: 768px) {
+  #mainimg {
+    display: none;
+  }
+}
+
+/* Navbar Styles */
+.navbar-nav {
+  flex-direction: row;
+  align-items: center;
+}
+
+.nav-item {
+  padding-left: 5px;
+  padding-right: 5px;
+  font-size: 20px;
+}
+
+/* Button Hover Effect */
+.btnhv:hover {
+  background: -webkit-linear-gradient(#0096aa, #009970);
+}
+
+/* Department Text Styles */
+.department-text {
+  font-size: 1.5rem;
+  color: #006080;
+  font-weight: 500;
+}
+
+.department {
+    margin-top: 8rem;
+    margin-bottom: 8rem;
+
+}
+
+/* Contact Section Styles */
+.contact-section {
+  margin-bottom: 120px;
+  padding: 60px 20px;
+}
+
+.contact-section h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+/* Footer Styles */
+footer {
+  background-color: #000;
+  color: #fff;
+  padding: 20px 0;
+  text-align: center;
+}
+
+.submitbtn {
+  width: 19rem;
+  margin-top: 1px;
+  height: 40px;
+}
