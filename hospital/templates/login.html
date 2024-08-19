@@ -26,7 +26,22 @@
 			<div class="row justify-content-center " >
 				<div class="col-md-6 col-lg-4">
 					<div class="login-wrap p-0">
-		      	<h3 class="mb-4 text-center">Login to your account</h3>
+				  <!-- Success Message Display -->
+				  {% if messages %}
+				
+					
+					  {% for message in messages %}
+					 
+					  <h6 class="mb-4 text-center text-success font-weight-bolder">{{ message }}<h6>
+					  
+					  {% endfor %}
+				
+				  {% endif %}
+				  {% if not messages %}
+				  <h3 class="mb-4 text-center">Login to your account</h3>
+				  {% endif %}
+				  <!-- End Success Message Display -->
+		      	
 		      	<form action="#" class="signin-form">
                     <div class="form-group " >
                        

@@ -1,4 +1,5 @@
 {% load static %}
+{% load crispy_forms_tags %}
 <!doctype html>
 <html lang="en">
   <head>
@@ -23,25 +24,26 @@
 				<div class="col-md-6 col-lg-4">
 					<div class="login-wrap p-0">
 		      	<h3 class="mb-4 text-center">Create an account</h3>
-		      	<form action="#" class="signin-form">
+		      	<form method="POST" class="signin-form">
+					{% csrf_token %}
                     <div class="form-group " >
-                       
-                        <select id="role-select" class="form-control " required >
-                          
-                            <option value="patient" >Patient</option>
-                            <option value="doctor">Doctor</option>
-                            <option value="admin">Admin</option>
-                        </select>
+						{{ form.user_type|as_crispy_field }}
+                     
                     </div>
+					
+					
+					<div class="form-group">
+						{{ form.email|as_crispy_field }}
+					
 		      		<div class="form-group">
-		      			<input type="text" class="form-control" placeholder="Username" required>
+						{{ form.username|as_crispy_field }}
 		      		</div>
 	            <div class="form-group">
-	              <input id="password-field" type="password" class="form-control" placeholder="Password" required>
+					{{ form.password1|as_crispy_field }}
 	              <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
 	            </div>
 	            <div class="form-group">
-	              <input id="password-field" type="cpassword" class="form-control" placeholder="Confirm Password" required>
+					{{ form.password2|as_crispy_field }}
 	              <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
 	            </div>
 	            <div class="form-group">
