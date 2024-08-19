@@ -6,6 +6,9 @@ from .forms import UserRegisterForm
 from django.template.loader import get_template
 from django.core.mail import EmailMultiAlternatives
 from . models import UserProfile
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 
 # Create your views here.
 
@@ -27,10 +30,29 @@ def home(request):
 # View for login page
 
 def loginpage(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            login(request, user)
+            user_profile = user.profile
+            if user_profile.user_type == 'patient':
+                return redirect('patient_dashboard')
+            elif user_profile.user_type == 'doctor':
+                return redirect('doctor_dashboard')
+            elif user_profile.user_type == 'admin':
+                return redirect('admin_dashboard')
+        else:
+            messages.error(request, 'Invalid username or password')
     return render(request,'login.html')
 
-
-
+def customlogout(request):
+    logout(request)
+    messages.success(request, "You have been logged out successfully.")
+    return redirect('login')
   
 ########### register here ##################################### 
 def register(request):
@@ -45,6 +67,7 @@ def register(request):
             user_profile.save()
             username = form.cleaned_data.get('username')
             email = form.cleaned_data.get('email')
+            
             ######################### mail system #################################### 
             htmly = get_template('Email.html')
             d = { 'username': username }
@@ -53,9 +76,24 @@ def register(request):
             msg = EmailMultiAlternatives(subject, html_content, from_email, [to])
             msg.attach_alternative(html_content, "text/html")
             msg.send()
+            
             ################################################################## 
             messages.success(request, f'Your account has been created ! You are now able to log in')
             return redirect('login')
     else:
         form = UserRegisterForm()
     return render(request, 'register.html', {'form': form})
+
+
+ #########################Dashboard views######################################### 
+@login_required
+def patient_dashboard_view(request):
+    return render(request, 'patient/dashboard.html')
+
+@login_required
+def doctor_dashboard_view(request):
+    return render(request, 'doctor/dashboard.html')
+
+@login_required
+def admin_dashboard_view(request):
+    return render(request, 'admin/dashboard.html')
