@@ -1,0 +1,210 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Patient Bill - Nuclear Hospital, Kakkanad</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    @page {
+      size: A4;
+      margin: 2cm;
+    }
+   
+
+    .invoice-box {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #eee;
+      box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+      font-size: 16px;
+      line-height: 24px;
+      font-family: 'Helvetica Neue', 'Helvetica', Arial, sans-serif;
+      color: #555;
+    }
+
+    .invoice-box table {
+      width: 100%;
+      line-height: inherit;
+      text-align: left;
+    }
+
+    .invoice-box table td {
+      padding: 8px;
+      vertical-align: top;
+    }
+
+    .invoice-box table tr td:nth-child(2) {
+      text-align: right;
+    }
+
+    .invoice-box table tr.top table td {
+      padding-bottom: 20px;
+    }
+
+    .invoice-box table tr.top table td.title {
+      font-size: 36px;
+      line-height: 36px;
+      color: #333;
+    }
+
+    .invoice-box table tr.information table td {
+      padding-bottom: 20px;
+    }
+
+    .invoice-box table tr.heading td {
+      background: #eee;
+      border-bottom: 1px solid #ddd;
+      font-weight: bold;
+    }
+
+    .invoice-box table tr.details td {
+      padding-bottom: 20px;
+    }
+
+    .invoice-box table tr.item td {
+      border-bottom: 1px solid #eee;
+    }
+
+    .invoice-box table tr.item.last td {
+      border-bottom: none;
+    }
+
+    .invoice-box table tr.total td:nth-child(2) {
+      border-top: 2px solid #eee;
+      font-weight: bold;
+    }
+
+    @media only screen and (max-width: 600px) {
+      .invoice-box table tr.top table td,
+      .invoice-box table tr.information table td {
+        width: 100%;
+        display: block;
+        text-align: center;
+      }
+    }
+
+    .invoice-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .invoice-header img {
+      width: 100px;
+    }
+
+    .download {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .download a {
+      background-color: #007bff;
+      color: #fff;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="invoice-box">
+    <div class="invoice-header">
+      <div>
+        <h1>Nuclear Hospital</h1>
+      </div>
+      <div>
+        <img src="https://raw.githubusercontent.com/haplle/image-host-temporary/main/logo.png" alt="Hospital Logo" style="width: 200px;" >
+      </div>
+    </div>
+    <table cellpadding="0" cellspacing="0">
+      <tr class="top">
+        <td colspan="2">
+          <table>
+            <tr>
+              <td class="title">
+                <h2>Patient Bill</h2>
+              </td>
+
+              <td>
+                Admit Date: {{ admitDate }}<br>
+                Release Date: {{ todayDate }}<br>
+                Days Spent: {{ day }}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr class="information">
+        <td colspan="2">
+          <table>
+            <tr>
+              <td>
+                Patient Name: {{ name }}<br>
+                Patient Contact: {{ mobile }}<br>
+                Patient Address: {{ address }}
+              </td>
+
+              <td>
+                Doctor Name:<br>
+                {{ assignedDoctorName }}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr class="heading">
+        <td>Disease and Symptoms</td>
+        <td></td>
+      </tr>
+
+      <tr class="details">
+        <td>{{ symptoms }}</td>
+      </tr>
+
+      <tr class="heading">
+        <td>Item</td>
+        <td>Price</td>
+      </tr>
+
+      <tr class="item">
+        <td>Room Charge for {{ day }} Days</td>
+        <td>{{ roomCharge }}</td>
+      </tr>
+
+      <tr class="item">
+        <td>Doctor Fee</td>
+        <td>{{ doctorFee }}</td>
+      </tr>
+
+      <tr class="item">
+        <td>Medicine Cost</td>
+        <td>{{ medicineCost }}</td>
+      </tr>
+
+      <tr class="item last">
+        <td>Other Charges</td>
+        <td>{{ OtherCharge }}</td>
+      </tr>
+
+      <tr class="total">
+        <td></td>
+        <td>Total: {{ total }}</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="download">
+    <a href="{% url 'download-pdf' patientId %}">Download PDF</a>
+  </div>
+
+</body>
+
+</html>

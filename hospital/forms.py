@@ -9,11 +9,22 @@ USER_TYPE_CHOICES = (
     ('admin', 'Admin'),
 )
 
+DEPARTMENTS = (
+        ('cardiology', 'Cardiology'),
+        ('neurology', 'Neurology'),
+        ('oncology', 'Oncology'),
+        ('orthopedics', 'Orthopedics'),
+        ('pediatrics', 'Pediatrics'),
+        ('gynaecology', 'Gynaecology'),
+        ('general', 'General'),
+        ('emergency', 'Emergency'),
+    )
+
 class UserRegisterForm(UserCreationForm):
     user_type = forms.ChoiceField(choices=USER_TYPE_CHOICES)
     email = forms.EmailField()
-   
- 
+    department = forms.ChoiceField(choices=DEPARTMENTS)
+    
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2', 'user_type']
+        fields = ['username', 'email', 'password1', 'password2', 'user_type', 'department']

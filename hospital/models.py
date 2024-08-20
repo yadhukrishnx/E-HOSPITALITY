@@ -10,13 +10,30 @@ class UserProfile(models.Model):
         ('doctor', 'Doctor'),
         ('admin', 'Admin'),
     )
+    DEPARTMENTS = (
+        ('cardiology', 'Cardiology'),
+        ('neurology', 'Neurology'),
+        ('oncology', 'Oncology'),
+        ('orthopedics', 'Orthopedics'),
+        ('pediatrics', 'Pediatrics'),
+        ('gynaecology', 'Gynaecology'),
+        ('general', 'General'),
+        ('emergency', 'Emergency'),
+    )
+    STATUS = (
+        ('pending', 'Pending'),
+        ('confirmed', 'Confirmed'),
+        ('cancelled', 'Cancelled'),
+    )
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    department = models .CharField(max_length=20, choices=DEPARTMENTS, blank=True, null=True)
     phone_no = models.CharField(max_length=20, blank=True, null=True)
     first_name = models.CharField(max_length=20, blank=True, null=True)
     last_name = models.CharField(max_length=20, blank=True, null=True)
     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES)
-
+    status = models.CharField(max_length=10, choices=STATUS, default='pending')
+    
     def __str__(self):
         return self.user.username
 # Signal to automatically create or update a user profile whenever a User object is created or updated

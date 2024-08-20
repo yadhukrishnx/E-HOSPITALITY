@@ -1,0 +1,39 @@
+{% extends 'patient/dashboard.html' %}
+{% block content %}
+ <!-- Main Content -->
+ <div class="container">
+    <div class="row">
+        <!-- Health Tips Section -->
+        <div class="col-md-6 mb-4">
+            <h2>Health Tips</h2>
+            <ul class="list-group">
+                <li class="list-group-item">Eat a balanced diet rich in fruits and vegetables.</li>
+                <li class="list-group-item">Exercise regularly to maintain a healthy weight.</li>
+                <li class="list-group-item">Stay hydrated by drinking plenty of water.</li>
+                <li class="list-group-item">Get regular medical check-ups.</li>
+                <li class="list-group-item">Avoid smoking and limit alcohol consumption.</li>
+            </ul>
+        </div>
+
+        <!-- Educational Materials Section -->
+        <div class="col-md-6 mb-4">
+            <h2>Educational Materials</h2>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Nutrition Guide</h5>
+                    <p class="card-text">Learn about the importance of a balanced diet and how to plan your meals for optimal health.</p>
+                    <a href="{% url 'download_nutrition_guide' %}" class="btn btn-primary">Download PDF</a>
+                </div>
+            </div>
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">Exercise Plans</h5>
+                    <p class="card-text">Discover exercise routines for different fitness levels and how to stay active daily.</p>
+                    <a href="{% url 'download_exercise_plan' %}" class="btn btn-primary">Download PDF</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

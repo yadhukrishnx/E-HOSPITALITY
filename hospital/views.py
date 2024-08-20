@@ -39,12 +39,21 @@ def loginpage(request):
         if user is not None:
             login(request, user)
             user_profile = user.profile
-            if user_profile.user_type == 'patient':
-                return redirect('patient_dashboard')
-            elif user_profile.user_type == 'doctor':
-                return redirect('doctor_dashboard')
-            elif user_profile.user_type == 'admin':
-                return redirect('admin_dashboard')
+            if user_profile.status == 'pending':
+                messages.error(request, 'Your account is not approved yet. Please wait for approval.')
+                logout(request)
+                return redirect('login')
+            elif user_profile.status == 'cancelled':
+                messages.error(request, 'Your account has been cancelled. Please contact the admin.')
+                logout(request)
+                return redirect('login')
+            elif user_profile.status == 'confirmed':
+                if user_profile.user_type == 'patient':
+                    return redirect('patient_dashboard')
+                elif user_profile.user_type == 'doctor':
+                    return redirect('doctor_dashboard')
+                elif user_profile.user_type == 'admin':
+                    return redirect('admin_dashboard')
         else:
             messages.error(request, 'Invalid username or password')
     return render(request,'login.html')
@@ -97,3 +106,50 @@ def doctor_dashboard_view(request):
 @login_required
 def admin_dashboard_view(request):
     return render(request, 'admin/dashboard.html')
+
+
+ #########################Patient views######################################### 
+ 
+@login_required
+def patient_appointments_view(request):
+    return render(request, 'patient/appointments.html')
+
+@login_required
+def patient_discharge_view(request):
+    return render(request, 'patient/discharge.html')
+
+@login_required
+def patient_tips_view(request):
+    return render(request, 'patient/tips.html')
+
+
+########################## Patient Downloads #########################################
+
+import io
+from xhtml2pdf import pisa
+from django.template.loader import get_template
+from django.template import Context
+from django.http import HttpResponse
+
+@login_required
+def download_nutrition_guide(request):
+    dict={
+        'name':request.user.username
+        
+    }
+    return render_to_pdf('patient/nutritionguide.html',dict)
+def download_exercise_plan(request):
+    dict={
+        'name':request.user.username
+    }
+    return render_to_pdf('patient/exerciseplan.html',dict)
+
+def render_to_pdf(template_src, context_dict):
+    template = get_template(template_src)
+    html  = template.render(context_dict)
+    result = io.BytesIO()
+    pdf = pisa.pisaDocument(io.BytesIO(html.encode("ISO-8859-1")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return
+    
