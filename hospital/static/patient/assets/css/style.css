@@ -10201,6 +10201,13 @@ progress {
     --bs-gutter-y: 3rem;
   }
 }
+.usertable tbody tr td:last-child {
+  display: flex;
+  
+  
+  gap : 5px;
+}
+
 .table {
   --bs-table-color-type: initial;
   --bs-table-bg-type: initial;
@@ -21783,11 +21790,12 @@ code {
 /* === Components === */
 /* Badges */
 .badge {
-  border-radius: 0.125rem;
-  font-size: 11px;
+  border-radius: 0.985rem;
+  font-size: 10px;
+
   font-weight: initial;
   line-height: 1;
-  padding: 0.375rem 0.5625rem;
+  padding: 0.275rem 0.4625rem;
   font-family: "ubuntu-medium", sans-serif;
 }
 .badge.badge-pill {
@@ -21821,7 +21829,7 @@ code {
 
 .badge-warning, .preview-list .preview-item .preview-thumbnail .badge.badge-busy {
   border: 1px solid #fed713;
-  color: #ffffff;
+  color: black;
   background: #fed713;
 }
 

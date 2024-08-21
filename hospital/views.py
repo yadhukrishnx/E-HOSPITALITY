@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
@@ -9,6 +9,8 @@ from . models import UserProfile
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from django.contrib.auth.models import User
+from django.views.decorators.http import require_POST
 
 # Create your views here.
 
@@ -70,7 +72,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             user_profile = UserProfile.objects.get(user=user)
-            
+            user_profile.username = form.cleaned_data.get('username')
             user_profile.email = form.cleaned_data.get('email')
             user_profile.user_type = form.cleaned_data.get('user_type')
             user_profile.save()
@@ -101,11 +103,22 @@ def patient_dashboard_view(request):
 
 @login_required
 def doctor_dashboard_view(request):
-    return render(request, 'doctor/dashboard.html')
+     return render(request, 'doctor/dashboard.html',)
 
 @login_required
 def admin_dashboard_view(request):
-    return render(request, 'admin/dashboard.html')
+    
+    pendingusers = UserProfile.objects.filter(status='pending')
+    patients = UserProfile.objects.filter(user_type='patient')
+    doctors = UserProfile.objects.filter(user_type='doctor')
+    admins = UserProfile.objects.filter(user_type='admin')
+    return render(request, 'admin/dashboard.html' ,{
+      
+        'pendingusers': pendingusers,
+        'patients': patients,
+        'doctors': doctors,
+        'admins': admins,
+    })
 
 
  #########################Patient views######################################### 
@@ -153,3 +166,21 @@ def render_to_pdf(template_src, context_dict):
         return HttpResponse(result.getvalue(), content_type='application/pdf')
     return
     
+    
+    
+############################ Admin view #############################################
+@login_required
+@require_POST
+def approve_user(request, user_id):
+    user_profile = get_object_or_404(UserProfile, user_id=user_id)
+    user_profile.status = 'confirmed'
+    user_profile.save()
+    return redirect('admin_dashboard')
+
+@login_required
+@require_POST
+def reject_user(request, user_id):
+    user_profile = get_object_or_404(UserProfile, user_id=user_id)
+    user_profile.status = 'cancelled'
+    user_profile.save()
+    return redirect('admin_dashboard')

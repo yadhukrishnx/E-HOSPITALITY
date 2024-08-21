@@ -20,4 +20,8 @@ urlpatterns = [
     path('tips/', views.patient_tips_view, name='tips'),
     path('nutrition/', views.download_nutrition_guide, name='download_nutrition_guide'),
     path('exercise/', views.download_exercise_plan, name='download_exercise_plan'),
+    
+    # Admin Related Urls
+    path('admin-dashboard/approve/<int:user_id>/', views.approve_user, name='approve_user'),
+    path('admin-dashboard/reject/<int:user_id>/', views.reject_user, name='reject_user'),
 ]

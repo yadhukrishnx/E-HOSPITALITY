@@ -89,7 +89,7 @@
                 </div>
                 <div class="nav-profile-text d-flex flex-column">
                   <span class="font-weight-bold mb-2">{{ request.user.username }}</span>
-                  <span class="text-secondary text-small">Patient Profile</span>
+                  <span class="text-secondary text-small">Admin Profile</span>
                 </div>
                 <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
               </a>
@@ -125,97 +125,201 @@
 
             {% block content %}
 
-            <div class="page-header">
-              <h3 class="page-title">
-                <span class="page-title-icon bg-gradient-primary text-white me-2">
-                  <i class="mdi mdi-home"></i>
-                </span> Dashboard
-              </h3>
-              <nav aria-label="breadcrumb">
-                <ul class="breadcrumb">
-                  <li class="breadcrumb-item active" aria-current="page">
-                    <span></span>Overview <i class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
-                  </li>
-                </ul>
-              </nav>
-            </div>
             <div class="row">
-              <div class="col-md-4 stretch-card grid-margin">
-                <div class="card bg-gradient-danger card-img-holder text-white">
-                  <div class="card-body">
-                    <h3>Doctor Name : </h3>
-                    <h5>Speciality : </h5>
-                    <h5>Appointments : </h5>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4 stretch-card grid-margin">
-                <div class="card bg-gradient-info card-img-holder text-white">
-                  <div class="card-body">
-                    <h3>Admit date : </h3>
-                    <h5>Symptoms : </h5>
-                    <h5>Discharge : </h5>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4 stretch-card grid-margin">
-                <div class="card bg-gradient-success card-img-holder text-white">
-                  <div class="card-body">
-                   <h3>Bill status : </h3>
-                   <h5>Bill amount : </h5>
-                  </div>
-                </div>
-              </div>
-            </div>
-       
-            <div class="row">
+
               <div class="col-12 grid-margin">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title">Available Doctors</h4>
+                    <h4 class="card-title">Pending List</h4>
+                    {% if not pendingusers %}
+                    <br>
+                    <h4 class="card-title">No Pending Users</h4>
+                    {% else %}
                     <div class="table-responsive">
-                      <table class="table">
+                      <table class="table usertable" >
                         <thead>
                           <tr>
-                            <th> Doctor Name </th>
-                            <th> Department </th>
-                            <th> Available Days </th>
+                            <th> User Name </th>
+                            <th> Email </th>
+                            <th> Status </th>
+                            <th> User Type </th>
                             <th> Action </th>
                           </tr>
                         </thead>
                         <tbody>
+                          {% for user in pendingusers %}
                           <tr>
-                            <td> Dr. John Doe </td>
-                            <td> Cardiology </td>
-                            <td> Monday, Wednesday, Friday </td>
-                            <td>
-                              <button class="btn btn-gradient-primary btn-sm">Book Appointment</button>
+                            <td> {{ user.username }} </td>
+                            <td> {{ user.email }} </td>
+                            {% if user.status == 'confirmed' %}
+                            <td> <label  class="badge badge-success"> {{ user.status }}</label> </td>
+                            {% elif user.status == 'cancelled' %}
+                            <td> <span class="badge badge-danger">Rejected</span> </td>
+                            {% else %}
+                            <td> <span class="badge badge-warning">Pending</span> </td>
+                            {% endif %}
+                            <td> {{ user.user_type }} </td>
+                            <td >
+                              {% if user.status != 'confirmed' %}
+                              <form method="post" action="{% url 'approve_user' user.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-success btn-sm">Approve</button>
+                              </form>
+                          
+                              {% endif %}
+                              <form method="post" action="{% url 'reject_user' user.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                              </form>
                             </td>
                           </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 grid-margin">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Patient List</h4>
+                    <div class="table-responsive">
+                      <table class="table usertable">
+                        <thead>
                           <tr>
-                            <td> Dr. Jane Smith </td>
-                            <td> Neurology </td>
-                            <td> Tuesday, Thursday </td>
+                            <th> User Name </th>
+                            <th> Email </th>
+                            <th> Status </th>
+                            <th> Action </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for user in patients %}
+                          <tr>
+                            <td> {{ user.username }} </td>
+                            <td> {{ user.email }} </td>
+                            {% if user.status == 'confirmed' %}
+                            <td> <label  class="badge badge-success"> {{ user.status }}</label> </td>
+                            {% elif user.status == 'cancelled' %}
+                            <td> <span class="badge badge-danger">Rejected</span> </td>
+                            {% else %}
+                            <td> <span class="badge badge-warning">Pending</span> </td>
+                            {% endif %}
                             <td>
-                              <button class="btn btn-gradient-primary btn-sm">Book Appointment</button>
+                              {% if user.status != 'confirmed' %}
+                              <form method="post" action="{% url 'approve_user' user.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-success btn-sm">Approve</button>
+                              </form>
+                              {% endif %}
+                              <form method="post" action="{% url 'reject_user' user.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                              </form>
                             </td>
                           </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+              <div class="col-12 grid-margin">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Doctor List</h4>
+                    <div class="table-responsive">
+                      <table class="table usertable">
+                        <thead>
                           <tr>
-                            <td> Dr. William Brown </td>
-                            <td> Orthopedics </td>
-                            <td> Monday, Thursday, Saturday </td>
+                            <th> User Name </th>
+                            <th> Email </th>
+                            <th> Status </th>
+                            <th> Action </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for user in doctors %}
+                          <tr>
+                            <td> {{ user.username }} </td>
+                            <td> {{ user.email }} </td>
+                            {% if user.status == 'confirmed' %}
+                            <td> <label  class="badge badge-success"> {{ user.status }}</label> </td>
+                            {% elif user.status == 'cancelled' %}
+                            <td> <span class="badge badge-danger">Rejected</span> </td>
+                            {% else %}
+                            <td> <span class="badge badge-warning">Pending</span> </td>
+                            {% endif %}
                             <td>
-                              <button class="btn btn-gradient-primary btn-sm">Book Appointment</button>
+                              {% if user.status != 'confirmed' %}
+                              <form method="post" action="{% url 'approve_user' user.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-success btn-sm">Approve</button>
+                              </form>
+                              {% endif %}
+                              <form method="post" action="{% url 'reject_user' user.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                              </form>
                             </td>
                           </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+              <div class="col-12 grid-margin">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Admin List</h4>
+                    <div class="table-responsive">
+                      <table class="table usertable">
+                        <thead>
                           <tr>
-                            <td> Dr. Emily White </td>
-                            <td> Pediatrics </td>
-                            <td> Wednesday, Friday </td>
+                            <th> User Name  </th>
+                            <th> Email </th>
+                            <th> Status </th>
+                            <th> Action </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        
+                          {% for user in admins %}
+                          {% if not user.username == None %}
+                          
+                            <tr>
+                            <td> {{ user.username  }} </td>
+                            <td> {{ user.email }} </td>
+                            {% if user.status == 'confirmed' %}
+                            <td> <label  class="badge badge-success"> {{ user.status }}</label> </td>
+                            {% elif user.status == 'cancelled' %}
+                            <td> <span class="badge badge-danger">Rejected</span> </td>
+                            {% else %}
+                            <td> <span class="badge badge-warning">Pending</span> </td>
+                            {% endif %}
                             <td>
-                              <button class="btn btn-gradient-primary btn-sm">Book Appointment</button>
+                              {% if user.status != 'confirmed' %}
+                              <form method="post" action="{% url 'approve_user' user.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-success btn-sm">Approve</button>
+                              </form>
+                              {% endif %}
+                              <form method="post" action="{% url 'reject_user' user.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                              </form>
                             </td>
                           </tr>
+                          {% endif %}
+                          {% endfor %}
                         </tbody>
                       </table>
                     </div>
@@ -223,6 +327,7 @@
                 </div>
               </div>
             </div>
+            
             
             {% endblock %}
 
