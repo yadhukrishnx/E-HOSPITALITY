@@ -95,10 +95,16 @@ def register(request):
         form = UserRegisterForm()
     return render(request, 'register.html', {'form': form})
 
+def update_profile(request):
+    return render(request, 'updateprofile.html')
 
  #########################Dashboard views######################################### 
 @login_required
 def patient_dashboard_view(request):
+    user = request.user
+    user_profile = get_object_or_404(UserProfile, user=user)
+    if user_profile.name == None or user_profile.name == '' or user_profile.address == None :
+        return redirect('update_profile')
     return render(request, 'patient/dashboard.html')
 
 @login_required
