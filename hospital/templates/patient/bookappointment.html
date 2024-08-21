@@ -1,0 +1,34 @@
+{% extends 'patient/dashboard.html' %}
+{% block content %}
+<div class="card-body">
+    <h4 class="card-title">Appointment Booking : Dr.{{doctor.name}} </h4>
+    <p class="card-description"> Department : {{doctor.department}}</p>
+    <form class="forms-sample" method="POST">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="exampleInputName1">Name</label>
+        <input type="text" class="form-control" id="name" name="name" placeholder="Full Name">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputEmail3">Date of birth</label>
+        <input type="date" class="form-control" id="dob" name="dob" placeholder="Date Of Birth">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword4">Reason (optional)</label>
+        <input type="text" class="form-control" id="reason" name="reason" placeholder="Reason for Appointment / Symptoms" not required>
+      </div>
+      <div class="form-group">
+        <label for="exampleSelectGender">Gender</label>
+        <select class="form-select" id="gender" name="gender">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="transgender">Transgender</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
+      <button class="btn btn-light">Cancel</button>
+    </form>
+  </div>
+
+{% endblock %}

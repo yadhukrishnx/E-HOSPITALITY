@@ -4,26 +4,33 @@
     <div class="panel panel-primary">
       <div class="panel-heading">
         <h6 class="panel-title">Your Appointments</h6>
+
       </div>
-      <table class="table table-hover" id="dev-table">
+      <table class="table " id="dev-table">
         <thead>
           <tr>
             <th>Doctor Name</th>
-            <th>Description</th>
+            <th>Created At</th>
             <th>Date</th>
             <th>Status</th>
           </tr>
         </thead>
         {% for a in appointments %}
         <tr>
-          <td> {{a.doctorName}}</td>
-          <td>{{a.description}}</td>
-          <td>{{a.appointmentDate}}</td>
-          {%if a.status%}
-          <td> <span class="label label-primary">Confirmed</span></td>
-          {% else %}
-          <td> <span class="label label-success">Pending</span></td>
-          {% endif %}
+          <td> {{a.doctor.profile.name}}</td>
+          <td>{{a.created_at}}</td>
+          <td>{{a.appointment_date}}</td>
+          <td>
+            {% if a.status == 'pending' %}
+                <label class="badge badge-danger">Pending</label>
+            {% elif a.status == 'confirmed' %}
+                <label class="badge badge-success">Confirmed</label>
+            {% elif a.status == 'rescheduled' %}
+                <label class="badge badge-warning">Rescheduled</label>
+            {% elif a.status == 'cancelled' %}
+                <label class="badge badge-info">Cancelled</label>
+            {% endif %}
+        </td>
         </tr>
         {% endfor %}
       </table>

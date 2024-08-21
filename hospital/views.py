@@ -5,7 +5,7 @@ from django.conf import settings
 from .forms import UserRegisterForm
 from django.template.loader import get_template
 from django.core.mail import EmailMultiAlternatives
-from . models import UserProfile
+from . models import UserProfile,Appointment
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -150,7 +150,32 @@ def admin_dashboard_view(request):
  
 @login_required
 def patient_appointments_view(request):
-    return render(request, 'patient/appointments.html')
+    user = request.user
+    appointments = Appointment.objects.filter(patient=user)
+    context = {
+        'appointments':appointments
+    }
+    return render(request, 'patient/appointments.html',context)
+@login_required
+def book_appointment_view(request, doctor_id):
+    user = request.user
+    user_profile = get_object_or_404(UserProfile, user=user)
+    doctor = get_object_or_404(UserProfile, pk=doctor_id)
+    
+    if request.method == 'POST':
+        appointment = Appointment(
+            patient=user,
+            doctor=doctor,
+            dob=request.POST.get('dob'),
+            reason_for_visit=request.POST.get('reason'),
+            status='pending'  # Set default status to 'pending'
+        )
+        appointment.save()
+        messages.success(request, "Application for Appointment Submitted. Wait for approval from doctor.")
+        return redirect('appointments')
+    
+    return render(request, 'patient/bookappointment.html', {'doctor': doctor, 'user_profile': user_profile})
+
 
 @login_required
 def patient_discharge_view(request):

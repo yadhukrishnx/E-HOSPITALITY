@@ -17,6 +17,7 @@ urlpatterns = [
     
     # Patient Related Urls
     path('appointments/', views.patient_appointments_view, name='appointments'),
+    path('bookappointment/<int:doctor_id>/', views.book_appointment_view, name='bookappointment'),
     path('discharge/', views.patient_discharge_view, name='discharge'),
     path('tips/', views.patient_tips_view, name='tips'),
     path('nutrition/', views.download_nutrition_guide, name='download_nutrition_guide'),

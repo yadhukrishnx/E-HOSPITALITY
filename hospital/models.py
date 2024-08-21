@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+
 # User profile model to extend the User model
 class UserProfile(models.Model):
     USER_TYPE_CHOICES = (
@@ -62,7 +63,9 @@ class Appointment(models.Model):
 
     patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appointments_as_patient')
     doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appointments_as_doctor', limit_choices_to={'profile__user_type': 'doctor'})
-    appointment_date = models.DateTimeField()
+  
+    dob = models.DateField(null=True)
+    appointment_date = models.DateTimeField(null=True)
     reason_for_visit = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=15, choices=APPOINTMENT_STATUS, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
