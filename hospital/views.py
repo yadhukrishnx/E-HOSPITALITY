@@ -75,6 +75,9 @@ def register(request):
             user_profile.username = form.cleaned_data.get('username')
             user_profile.email = form.cleaned_data.get('email')
             user_profile.user_type = form.cleaned_data.get('user_type')
+            if user_profile.user_type == 'doctor':
+                user_profile.department = form.cleaned_data.get('department')
+                
             user_profile.save()
             username = form.cleaned_data.get('username')
             email = form.cleaned_data.get('email')
@@ -96,6 +99,17 @@ def register(request):
     return render(request, 'register.html', {'form': form})
 
 def update_profile(request):
+    if request.method == 'POST':
+        user_profile = get_object_or_404(UserProfile, user=request.user)
+        user_profile.name = request.POST.get('full_name')
+        user_profile.age = request.POST.get('age')
+        user_profile.address = request.POST.get('address')
+        user_profile.phone_no = request.POST.get('phone_number')
+        user_profile.save()
+        if request.user.profile.user_type == 'patient':
+            return redirect('patient_dashboard')
+        else:
+            return redirect('doctor_dashboard')
     return render(request, 'updateprofile.html')
 
  #########################Dashboard views######################################### 
@@ -103,13 +117,18 @@ def update_profile(request):
 def patient_dashboard_view(request):
     user = request.user
     user_profile = get_object_or_404(UserProfile, user=user)
+    doctors = UserProfile.objects.filter(user_type='doctor')
     if user_profile.name == None or user_profile.name == '' or user_profile.address == None :
         return redirect('update_profile')
-    return render(request, 'patient/dashboard.html')
+    return render(request, 'patient/dashboard.html',{'user_profile': user_profile ,'doctors':doctors})
 
 @login_required
 def doctor_dashboard_view(request):
-     return render(request, 'doctor/dashboard.html',)
+    user = request.user
+    user_profile = get_object_or_404(UserProfile, user=user)
+    if user_profile.name == None or user_profile.name == '' or user_profile.address == None :
+        return redirect('update_profile')
+    return render(request, 'doctor/dashboard.html',)
 
 @login_required
 def admin_dashboard_view(request):

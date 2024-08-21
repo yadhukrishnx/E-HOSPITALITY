@@ -38,6 +38,7 @@ class UserProfile(models.Model):
     last_name = models.CharField(max_length=20, blank=True, null=True)
     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES)
     status = models.CharField(max_length=10, choices=STATUS, default='pending')
+    doctor_availability = models.BooleanField(default=False)
     
     def __str__(self):
         return self.user.username
