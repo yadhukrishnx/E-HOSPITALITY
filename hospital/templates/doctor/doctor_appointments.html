@@ -1,0 +1,82 @@
+{% extends 'doctor/dashboard.html' %}
+{% block content %}
+<div class="row">
+    <div class="col-12 grid-margin">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Patient Appointment List</h4>
+          <br>
+          {% if messages %}
+          <div class="alert alert-info">
+              {% for message in messages %}
+                  <p>{{ message }}</p>
+              {% endfor %}
+          </div>
+      {% endif %}<br>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th> Patient Name </th>
+                  <th> Phone Number </th>
+                  <th> Date of Visit </th>
+                  <th> Reason for Visit </th>
+                  <th> Status </th>
+                  <th> Actions </th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for appointment in appointments %}
+                <tr>
+                  <td> {{ appointment.patient.profile.name }}  </td>
+                  <td> {{ appointment.patient.profile.phone_no }} </td>
+                  <td> {{ appointment.appointment_date }} </td>
+                  <td> {{ appointment.reason_for_visit }} </td>
+                  <td>
+                    {% if appointment.status == 'pending' %}
+                        <label class="badge badge-danger">Pending</label>
+                    {% elif appointment.status == 'confirmed' %}
+                        <label class="badge badge-success">Confirmed</label>
+                    {% elif appointment.status == 'rescheduled' %}
+                        <label class="badge badge-warning">Rescheduled</label>
+                    {% elif appointment.status == 'cancelled' %}
+                        <label class="badge badge-info">Cancelled</label>
+                    {% endif %}
+                </td>
+                  <td>
+                    {% if appointment.status == 'pending' %}
+                    <form method="post" action="{% url 'confirm_appointment' appointment.id %}" style="display:inline;">
+                      {% csrf_token %}
+                      <button class="btn btn-gradient-success btn-sm" type="submit">Confirm</button>
+                    </form>
+                    <form method="post" action="{% url 'reject_appointment' appointment.id %}" style="display:inline;">
+                      {% csrf_token %}
+                      <button class="btn btn-gradient-danger btn-sm" type="submit">Reject</button>
+                    </form>
+                    {% elif appointment.status == 'confirmed' %}
+                
+                        <a class="btn btn-gradient-warning btn-sm"  href="{% url 'doctor_reschedule_appointment' appointment.id %}">Reschedule</a>
+                 
+                    <form method="post" action="{% url 'reject_appointment' appointment.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button class="btn btn-gradient-danger btn-sm" type="submit">Reject</button>
+                      </form>
+                    {% else %}
+                    <a class="btn btn-gradient-warning btn-sm" href="{% url 'doctor_reschedule_appointment' appointment.id %}">Reschedule</a>
+                    {% endif %}
+
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="5" class="text-center">No appointments found.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

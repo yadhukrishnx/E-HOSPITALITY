@@ -1,0 +1,15 @@
+{% extends 'patient/dashboard.html' %}
+{% block content %}
+<div class="container">
+    <h4 class="card-title">Reschedule Appointment</h4>
+    <p class="card-description">Change the date for your appointment with Dr. {{ appointment.doctor.profile.first_name }} {{ appointment.doctor.profile.last_name }}.</p>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="appointment_date">New Appointment Date</label>
+            <input type="datetime-local" class="form-control" id="appointment_date" name="appointment_date" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{% endblock %}

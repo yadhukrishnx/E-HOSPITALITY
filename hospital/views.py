@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
+from django.utils import timezone
 
 # Create your views here.
 
@@ -122,14 +123,34 @@ def patient_dashboard_view(request):
         return redirect('update_profile')
     return render(request, 'patient/dashboard.html',{'user_profile': user_profile ,'doctors':doctors})
 
+
 @login_required
 def doctor_dashboard_view(request):
     user = request.user
-    user_profile = get_object_or_404(UserProfile, user=user)
-    if user_profile.name == None or user_profile.name == '' or user_profile.address == None :
-        return redirect('update_profile')
-    return render(request, 'doctor/dashboard.html',)
+    user_profile = user.profile
+    
+    # Calculate today's date
+    today = timezone.now().date()
+    
+    # Count today's appointments
+    today_appointments_count = Appointment.objects.filter(
+        doctor=user,
+        appointment_date__date=today
+    ).count()
 
+    # Count pending appointments
+    pending_appointments_count = Appointment.objects.filter(
+        doctor=user,
+        status='pending'
+    ).count()
+
+    context = {
+        'user_profile': user_profile,
+        'today_appointments_count': today_appointments_count,
+        'pending_appointments_count': pending_appointments_count,
+    }
+
+    return render(request, 'doctor/dashboard.html', context)
 @login_required
 def admin_dashboard_view(request):
     
@@ -160,7 +181,8 @@ def patient_appointments_view(request):
 def book_appointment_view(request, doctor_id):
     user = request.user
     user_profile = get_object_or_404(UserProfile, user=user)
-    doctor = get_object_or_404(UserProfile, pk=doctor_id)
+    doctor_profile = get_object_or_404(UserProfile, pk=doctor_id)
+    doctor = doctor_profile.user
     
     if request.method == 'POST':
         appointment = Appointment(
@@ -176,6 +198,34 @@ def book_appointment_view(request, doctor_id):
     
     return render(request, 'patient/bookappointment.html', {'doctor': doctor, 'user_profile': user_profile})
 
+
+@login_required
+def cancel_appointment_view(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id, patient=request.user)
+    if appointment.status == 'pending':
+        appointment.status = 'cancelled'
+        appointment.save()
+        messages.success(request, "Appointment has been cancelled.")
+    else:
+        messages.error(request, "You can only cancel pending appointments.")
+    return redirect('appointments')
+
+
+@login_required
+def reschedule_appointment_view(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id, patient=request.user)
+    if request.method == 'POST':
+        # Validate and update the appointment with new date/time
+        new_date = request.POST.get('appointment_date')
+        if new_date:
+            appointment.appointment_date = new_date
+            appointment.status = 'pending'  # Reset status to pending after rescheduling
+            appointment.save()
+            messages.success(request, "Appointment has been rescheduled.")
+            return redirect('appointments')
+        else:
+            messages.error(request, "Please provide a valid appointment date.")
+    return render(request, 'patient/reschedule_appointment.html', {'appointment': appointment})
 
 @login_required
 def patient_discharge_view(request):
@@ -234,3 +284,45 @@ def reject_user(request, user_id):
     user_profile.status = 'cancelled'
     user_profile.save()
     return redirect('admin_dashboard')
+
+@login_required
+def doctor_appointments_view(request):
+    user = request.user
+    appointments = Appointment.objects.filter(doctor=user)
+    return render(request, 'doctor/doctor_appointments.html', {'appointments': appointments})
+
+@login_required
+def confirm_appointment_view(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id, doctor=request.user)
+    if appointment.status == 'pending':
+        appointment.status = 'confirmed'
+        appointment.save()
+        messages.success(request, "Appointment confirmed.")
+        # Optionally, send a notification or email to the patient
+    return redirect('doctor_appointments')
+
+@login_required
+def reject_appointment_view(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id, doctor=request.user)
+
+    appointment.status = 'cancelled'
+    appointment.save()
+    messages.success(request, "Appointment rejected.")
+        
+    return redirect('doctor_appointments')
+
+@login_required
+def doctor_reschedule_appointment_view(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    if request.method == 'POST':
+        # Validate and update the appointment with new date/time
+        new_date = request.POST.get('appointment_date')
+        if new_date:
+            appointment.appointment_date = new_date
+            appointment.status = 'pending'  # Reset status to pending after rescheduling
+            appointment.save()
+            messages.success(request, "Appointment has been rescheduled.")
+            return redirect('doctor_appointments')
+        else:
+            messages.error(request, "Please provide a valid appointment date.")
+    return render(request, 'doctor/reschedule_appointment.html', {'appointment': appointment})

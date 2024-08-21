@@ -4,7 +4,13 @@
     <div class="panel panel-primary">
       <div class="panel-heading">
         <h6 class="panel-title">Your Appointments</h6>
-
+        {% if messages %}
+        <div class="alert alert-info">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
       </div>
       <table class="table " id="dev-table">
         <thead>
@@ -13,6 +19,7 @@
             <th>Created At</th>
             <th>Date</th>
             <th>Status</th>
+            <th>Actions</th> 
           </tr>
         </thead>
         {% for a in appointments %}
@@ -29,6 +36,17 @@
                 <label class="badge badge-warning">Rescheduled</label>
             {% elif a.status == 'cancelled' %}
                 <label class="badge badge-info">Cancelled</label>
+            {% endif %}
+        </td>
+        <td>  
+          {% if a.status == 'pending' %}
+              <form method="POST" action="{% url 'cancel_appointment' a.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+              </form>
+              <a href="{% url 'reschedule_appointment' a.id %}" class="btn btn-warning btn-sm">Reschedule</a>
+            {% elif a.status == 'cancelled' %}
+              <a href="{% url 'reschedule_appointment' a.id %}" class="btn btn-warning btn-sm">Reschedule</a>
             {% endif %}
         </td>
         </tr>
