@@ -36,6 +36,8 @@
                 <label class="badge badge-warning">Rescheduled</label>
             {% elif a.status == 'cancelled' %}
                 <label class="badge badge-info">Cancelled</label>
+            {% elif a.status == 'completed' %}
+                <label class="badge badge-success">Completed</label>
             {% endif %}
         </td>
         <td>  
@@ -47,6 +49,9 @@
               <a href="{% url 'reschedule_appointment' a.id %}" class="btn btn-warning btn-sm">Reschedule</a>
             {% elif a.status == 'cancelled' %}
               <a href="{% url 'reschedule_appointment' a.id %}" class="btn btn-warning btn-sm">Reschedule</a>
+            {% elif a.status == 'completed' %}
+              <a href="{% url 'download_checkup_report' a.id %}" class="btn btn-outline-success btn-sm">Download Report</a>
+
             {% endif %}
         </td>
         </tr>

@@ -52,17 +52,27 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
     
 
 
-
 class Appointment(models.Model):
     APPOINTMENT_STATUS = (
         ('pending', 'Pending'),
         ('confirmed', 'Confirmed'),
         ('rescheduled', 'Rescheduled'),
         ('cancelled', 'Cancelled'),
+        ('completed', 'Completed'),
     )
 
-    patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appointments_as_patient',limit_choices_to={'user_type': 'patient'})
-    doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appointments_as_doctor', limit_choices_to={'user_type': 'doctor'})
+    patient = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='appointments_as_patient',
+        limit_choices_to={'profile__user_type': 'patient'}
+    )
+    doctor = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='appointments_as_doctor',
+        limit_choices_to={'profile__user_type': 'doctor'}
+    )
 
     dob = models.DateField(null=True)
     appointment_date = models.DateTimeField(null=True)
@@ -73,8 +83,8 @@ class Appointment(models.Model):
 
     def __str__(self):
         return f"Appointment with Dr. {self.doctor.profile.first_name} {self.doctor.profile.last_name} on {self.appointment_date.strftime('%Y-%m-%d %H:%M')}"
-    
-    
+
+
 class CheckupDetails(models.Model):
     patient = models.ForeignKey(User, on_delete=models.CASCADE)
     prescription = models.TextField()

@@ -118,25 +118,32 @@ def update_profile(request):
 def patient_dashboard_view(request):
     user = request.user
     user_profile = get_object_or_404(UserProfile, user=user)
-    appointment = get_object_or_404(Appointment, patient=user)
+    
+    appointment = Appointment.objects.all().filter(patient=user)
+    if appointment.exists():
+        appointment = appointment.first()
+    else:
+        appointment = None
 
+    doctors = UserProfile.objects.filter(user_type='doctor')
     
     dict = {
-        'doctor_name': appointment.doctor.profile.name,
-        'department': appointment.doctor.profile.department,
-        'patient_name': appointment.patient.profile.name,
-        'patient_dob': appointment.dob,
-        'patient_phone': appointment.patient.profile.phone_no,
-        'patient_age': appointment.patient.profile.age,
-        'appointment_status' : appointment.status,
-        'created_on': appointment.created_at,
-        'appointment_date': appointment.appointment_date,
+        'doctor_name': appointment.doctor.profile.name if appointment else '',
+        'department': appointment.doctor.profile.department if appointment else '',
+        'patient_name': appointment.patient.profile.name if appointment else '',
+        'patient_dob': appointment.dob if appointment else '',
+        'patient_phone': appointment.patient.profile.phone_no if appointment else '',
+        'patient_age': appointment.patient.profile.age if appointment else '',
+        'appointment_status' : appointment.status if appointment else '',
+        'appointment_id': appointment.id if appointment else '',
+        'created_on': appointment.created_at if appointment else '',
+        'appointment_date': appointment.appointment_date if appointment else '',
         'current_year': timezone.now().year,
-        'appointment': appointment,
+        'appointment': appointment if appointment else '',
         'user_profile': user_profile ,
         'doctors':doctors
     }
-    doctors = UserProfile.objects.filter(user_type='doctor')
+    
     if user_profile.name == None or user_profile.name == '' or user_profile.address == None :
         return redirect('update_profile')
     
@@ -195,6 +202,7 @@ def patient_appointments_view(request):
     user = request.user
     user_profile = get_object_or_404(UserProfile, user=user)
     appointments = Appointment.objects.filter(patient=user)
+    
     context = {
         'appointments':appointments,
         'user_profile': user_profile
@@ -378,6 +386,8 @@ def doctor_checkup(request, appointment_id):
         checkup.observations = request.POST.get('observations')
         checkup.checkup_status = True
         checkup.save()
+        appointment.status = 'completed'
+        appointment.save()
         return redirect('doctor_appointments')
         
     return render(request, 'doctor/checkup.html', {'appointment': appointment, 'checkup': checkup})

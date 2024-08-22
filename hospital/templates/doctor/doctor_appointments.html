@@ -56,7 +56,7 @@
                     {% elif appointment.status == 'confirmed' %}
                 
                         <a class="btn btn-gradient-warning btn-sm"  href="{% url 'doctor_reschedule_appointment' appointment.id %}">Reschedule</a>
-                        {% if  checkup.checkup_status %}
+                        {% if not checkup %}
                                 <a class="btn btn-outline-success btn-sm" href="{% url 'doctor_checkup' appointment.id %}">Check Up</a>
                         {% else %}
 

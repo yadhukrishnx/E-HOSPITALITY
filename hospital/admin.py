@@ -1,35 +1,25 @@
 from django.contrib import admin
+from .models import UserProfile, Appointment, CheckupDetails
 
-# Register your models here.
-
-# admin.py
-
-from django.contrib import admin
-from .models import UserProfile, Appointment
-
+# Register UserProfile model with Django admin
+@admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'phone_no', 'first_name', 'last_name', 'user_type')
-    search_fields = ('user__username', 'phone_no', 'first_name', 'last_name', 'user_type')
-    list_filter = ('user_type',)
+    list_display = ('user', 'user_type', 'department', 'phone_no', 'status', 'doctor_availability')
+    search_fields = ('user__username', 'name', 'department')
+    list_filter = ('user_type', 'department', 'status', 'doctor_availability')
 
-admin.site.register(UserProfile, UserProfileAdmin)
-
-
+# Register Appointment model with Django admin
+@admin.register(Appointment)
 class AppointmentAdmin(admin.ModelAdmin):
-    # Define the fields to display in the list view
     list_display = ('patient', 'doctor', 'appointment_date', 'status', 'created_at')
-    
-    # Define filters for the list view
-    list_filter = ('status', 'doctor', 'appointment_date')
-    
-    # Add search functionality to the admin interface
-    search_fields = ('patient__username', 'doctor__username', 'reason_for_visit')
-    
-    # Define the fields to be displayed in the detail view
-    fields = ('patient', 'doctor', 'dob', 'appointment_date', 'reason_for_visit', 'status')
-    
+    search_fields = ('patient__username', 'doctor__username', 'appointment_date')
+    list_filter = ('status', 'appointment_date')
+    ordering = ('-appointment_date',)
 
-    # Optionally, define which fields should be read-only
-    readonly_fields = ('created_at', 'updated_at')
+# Register CheckupDetails model with Django admin
+@admin.register(CheckupDetails)
+class CheckupDetailsAdmin(admin.ModelAdmin):
+    list_display = ('patient', 'checkup_date', 'next_visit_date', 'checkup_status')
+    search_fields = ('patient__username', 'checkup_date')
+    list_filter = ('checkup_status', 'checkup_date')
 
-admin.site.register(Appointment, AppointmentAdmin)
