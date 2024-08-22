@@ -115,6 +115,13 @@
               </a>
              
             </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="{% url 'doctor_availability' %}" aria-expanded="false" aria-controls="forms">
+                <span class="menu-title">Availability</span>
+                <i class="fa fa-ticket menu-icon"></i>
+              </a>
+             
+            </li>
             
             
             
@@ -179,27 +186,63 @@
       <div class="card-body">
         <h4 class="card-title text-dark">Todo List</h4>
         <div class="add-items d-flex">
-          <input type="text" class="form-control todo-list-input" placeholder="What do you need to do today?" id="todo-input">
-          <button class="add btn btn-gradient-primary font-weight-bold todo-list-add-btn" id="add-task">Add</button>
+          <input type="text" class="form-control todo-list-input" placeholder="What do you need to do today?" id="task">
+          <button class="add btn btn-gradient-primary font-weight-bold todo-list-add-btn" id="add">Add</button>
         </div>
-        <div class="list-wrapper">
-          <ul class="d-flex flex-column-reverse todo-list todo-list-custom" id="todo-list">
-            <!-- List items will be added here -->
-          </ul>
-        </div>
+        
       </div>
     </div>
   </div>
-
-  <!-- Calendar -->
-  <div class="col-md-6 stretch-card grid-margin">
+  <!-- Task List -->
+  <div class="col-md-6 grid-margin stretch-card">
     <div class="card">
-      <div class="card-body p-0 d-flex">
-        <div id="inline-datepicker" class="datepicker datepicker-custom"></div>
+      <div class="card-body">
+        <h4 class="card-title">List of tasks</h4>
+        <ol id="taskList">
+      
+        </ol>
       </div>
     </div>
   </div>
 </div>
+
+  <script>
+    const taskInput = document.getElementById("task");
+const addBtn = document.getElementById("add");
+const taskList = document.getElementById("taskList");
+
+// Add task
+addBtn.addEventListener("click", () => {
+    const taskText = taskInput.value.trim();
+    if (taskText !== "") {
+        createTask(taskText);
+        taskInput.value = "";
+    }
+});
+
+// Create a new task
+function createTask(text) {
+    const taskItem = document.createElement("li");
+    taskItem.innerHTML = `
+        <span>${text}</span>
+        <button class="btn btn-outline-danger btn-rounded btn-sm delete ms-2">Delete</button>
+    `;
+    taskList.appendChild(taskItem);
+
+    // Delete task
+    const deleteBtn = taskItem.querySelector(".delete");
+    deleteBtn.addEventListener("click", () => {
+        taskItem.remove();
+    });
+
+    // Mark as completed
+    taskItem.addEventListener("click", () => {
+        taskItem.classList.toggle("completed");
+    });
+}
+  </script>
+
+  
 
 {% endblock %}
 

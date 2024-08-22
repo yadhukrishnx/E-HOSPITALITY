@@ -326,3 +326,14 @@ def doctor_reschedule_appointment_view(request, appointment_id):
         else:
             messages.error(request, "Please provide a valid appointment date.")
     return render(request, 'doctor/reschedule_appointment.html', {'appointment': appointment})
+
+@login_required
+def doctor_availability_view(request):
+    user = request.user
+    user_profile = user.profile
+    profile = get_object_or_404(UserProfile, user=request.user)
+    if request.method == 'POST':
+        profile.doctor_availability = not profile.doctor_availability
+        profile.save()
+        return redirect('doctor_availability')
+    return render(request, 'doctor/availability.html',{'profile': profile , 'user_profile':user_profile})
