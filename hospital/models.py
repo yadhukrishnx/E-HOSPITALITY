@@ -83,7 +83,7 @@ class Appointment(models.Model):
     payment_status = models.BooleanField(default=False)
     
     def __str__(self):
-        return f"Appointment with Dr. {self.doctor.profile.first_name} {self.doctor.profile.last_name} on {self.appointment_date.strftime('%Y-%m-%d %H:%M')}"
+        return f"Appointment with Dr"
 
 
 class CheckupDetails(models.Model):

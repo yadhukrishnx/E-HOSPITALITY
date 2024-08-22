@@ -406,10 +406,11 @@ def doctor_checkup(request, appointment_id):
 
 
 
+
 @login_required
 def checkup_report(request, appointment_id):
     appointment = get_object_or_404(Appointment, id=appointment_id)
-    checkup = get_object_or_404(CheckupDetails, patient=appointment.patient, checkup_date=appointment.appointment_date)
+    checkup = get_object_or_404(CheckupDetails, appointment=appointment)
     appointment.status = 'confirmed'
     context = {
         'doctor_name': appointment.doctor.profile.name,
@@ -450,6 +451,29 @@ def download_checkup_report(request, appointment_id):
     }
     return render_to_pdf('checkup_report.html',dict)
 
+# @login_required
+# def download_checkup_report(request, appointment_id):
+#     appointment = get_object_or_404(Appointment, id=appointment_id)
+#     checkup = get_object_or_404(CheckupDetails, appointment=appointment)
+#     if not appointment.payment_status:
+#         return redirect('make_payment', appointment_id)
+    
+#     dict = {    
+#         'doctor_name': appointment.doctor.profile.name,
+#         'department': appointment.doctor.profile.department,
+#         'patient_name': appointment.patient.profile.name,
+#         'patient_dob': appointment.dob,
+#         'patient_phone': appointment.patient.profile.phone_no,
+#         'patient_age': appointment.patient.profile.age,
+#         'checkup_date': checkup.checkup_date,
+#         'observations': checkup.observations,
+#         'prescription': checkup.prescription,
+#         'next_visit_date': checkup.next_visit_date,
+#         'current_year': timezone.now().year,
+#         'appointment': appointment,
+#     }
+#     return render_to_pdf('checkup_report.html',dict)
+
 
 # Stripe payment gateway
 
@@ -479,13 +503,13 @@ def make_payment(request, appointment_id):
             payment_method_types=['card'],
             line_items=[line_item],
             mode='payment',
-            success_url=request.build_absolute_uri(reverse('checkup_report', args=[appointment_id ])),
+            success_url=request.build_absolute_uri(reverse('checkup_report', args=[appointment_id])),
             cancel_url=request.build_absolute_uri(reverse('appointments')) + '?message=' + 'Payment+failed!',
         )
 
         return redirect(checkout_session.url, code=303)
     if appointment.payment_status == True:
-        return redirect('download_checkup_report', appointment_id)
+        return render(request, 'checkup_report.html', appointment_id)
     else:
         return render(request, 'patient/make_payment.html', {'appointment': appointment})
     
