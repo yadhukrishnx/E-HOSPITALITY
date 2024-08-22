@@ -61,9 +61,10 @@ class Appointment(models.Model):
         ('cancelled', 'Cancelled'),
     )
 
-    patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appointments_as_patient')
-    doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appointments_as_doctor', limit_choices_to={'profile__user_type': 'doctor'})
-  
+    patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appointments_as_patient',limit_choices_to={'user_type': 'patient'})
+    doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appointments_as_doctor', limit_choices_to={'user_type': 'doctor'})
+        
+    
     dob = models.DateField(null=True)
     appointment_date = models.DateTimeField(null=True)
     reason_for_visit = models.TextField(blank=True, null=True)
@@ -73,3 +74,15 @@ class Appointment(models.Model):
 
     def __str__(self):
         return f"Appointment with Dr. {self.doctor.profile.first_name} {self.doctor.profile.last_name} on {self.appointment_date.strftime('%Y-%m-%d %H:%M')}"
+    
+    
+class CheckupDetails(models.Model):
+    patient = models.ForeignKey(User, on_delete=models.CASCADE)
+    prescription = models.TextField()
+    observations = models.TextField()
+    next_visit_date = models.DateField(null=True)
+    checkup_status = models.BooleanField(default=False)
+    checkup_date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Checkup for {self.patient.username} on {self.checkup_date}"

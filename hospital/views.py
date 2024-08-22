@@ -5,7 +5,7 @@ from django.conf import settings
 from .forms import UserRegisterForm
 from django.template.loader import get_template
 from django.core.mail import EmailMultiAlternatives
-from . models import UserProfile,Appointment
+from . models import UserProfile,Appointment,CheckupDetails
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -127,7 +127,7 @@ def patient_dashboard_view(request):
 @login_required
 def doctor_dashboard_view(request):
     user = request.user
-    user_profile = user.profile
+    user_profile = get_object_or_404(UserProfile, user=user)
     
     # Calculate today's date
     today = timezone.now().date()
@@ -190,6 +190,7 @@ def book_appointment_view(request, doctor_id):
             doctor=doctor,
             dob=request.POST.get('dob'),
             reason_for_visit=request.POST.get('reason'),
+            appointment_date=request.POST.get('appointment_date'),  
             status='pending'  # Set default status to 'pending'
         )
         appointment.save()
@@ -337,3 +338,20 @@ def doctor_availability_view(request):
         profile.save()
         return redirect('doctor_availability')
     return render(request, 'doctor/availability.html',{'profile': profile , 'user_profile':user_profile})
+
+@login_required
+def doctor_checkup(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    checkup, created = CheckupDetails.objects.get_or_create(
+    patient=appointment.patient, 
+    checkup_date=appointment.appointment_date
+)
+
+    if request.method == 'POST':
+        checkup.prescription = request.POST.get('prescription')
+        checkup.next_visit_date = request.POST.get('next_visit_date')
+        checkup.observations = request.POST.get('observations')
+        checkup.save()
+        return redirect('doctor_appointments')
+        
+    return render(request, 'doctor/checkup.html', {'appointment': appointment, 'checkup': checkup})
