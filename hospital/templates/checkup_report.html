@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkup Report - Nuclear Hospital</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .report-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .report-header {
+            text-align: center;
+            padding-bottom: 20px;
+        }
+        .report-header img {
+            width: 200px;
+        }
+        .report-body {
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .report-footer {
+            text-align: center;
+            padding-top: 20px;
+            color: #777;
+        }
+        .divider {
+            border-bottom: 1px solid #ddd;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="report-container">
+        <div class="report-header">
+            <img src="https://raw.githubusercontent.com/haplle/image-host-temporary/main/logo.png" alt="Nuclear Hospital Logo">
+            <h2>Nuclear Hospital</h2>
+            <hr>
+        </div>
+        <div class="report-body">
+            <h3>Patient Checkup Report</h3>
+            <p><strong>Doctor Name:</strong> {{ doctor_name }}</p>
+            <p><strong>Department:</strong> {{ department }}</p>
+            <div class="divider"></div>
+            <p><strong>Patient Name:</strong> {{ patient_name }}</p>
+            <p><strong>Date of Birth:</strong> {{ patient_dob }}</p>
+            <p><strong>Phone Number:</strong> {{ patient_phone }}</p>
+            <p><strong>Age:</strong> {{ patient_age }}</p>
+            <div class="divider"></div>
+            <p><strong>Checkup Date:</strong> {{ checkup_date }}</p>
+            <p><strong>Observations:</strong> {{ observations }}</p>
+            <p><strong>Prescription:</strong> {{ prescription }}</p>
+            <p><strong>Next Visit Date:</strong> {{ next_visit_date }}</p>
+        </div>
+        <div class="report-footer">
+            <p>&copy; {{ current_year }} Nuclear Hospital. All rights reserved.</p>
+            <p>Address: Nuclear Hospital, Kakkanad, Kochi</p>
+            <p>Phone: +91-1234567890</p>
+            <a href="{% url 'download_checkup_report' appointment.id %}" class="btn btn-danger">Download Checkup Report</a>
+        </div>
+    </div>
+    
+
+</body>
+</html>

@@ -63,7 +63,7 @@ class Appointment(models.Model):
 
     patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appointments_as_patient',limit_choices_to={'user_type': 'patient'})
     doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appointments_as_doctor', limit_choices_to={'user_type': 'doctor'})
-        
+
     
     dob = models.DateField(null=True)
     appointment_date = models.DateTimeField(null=True)
@@ -81,7 +81,7 @@ class CheckupDetails(models.Model):
     prescription = models.TextField()
     observations = models.TextField()
     next_visit_date = models.DateField(null=True)
-    checkup_status = models.BooleanField(default=False)
+    checkup_status = models.BooleanField(null=True, default=False)
     checkup_date = models.DateField(auto_now_add=True)
 
     def __str__(self):

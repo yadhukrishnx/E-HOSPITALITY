@@ -56,10 +56,13 @@
                     {% elif appointment.status == 'confirmed' %}
                 
                         <a class="btn btn-gradient-warning btn-sm"  href="{% url 'doctor_reschedule_appointment' appointment.id %}">Reschedule</a>
-                        {% if checkup.checkup_status %}
+                        {% if  checkup.checkup_status %}
                                 <a class="btn btn-outline-success btn-sm" href="{% url 'doctor_checkup' appointment.id %}">Check Up</a>
                         {% else %}
+
                                 <a class="btn btn-outline-warning btn-sm" href="{% url 'doctor_checkup' appointment.id %}">Update Check Up</a>
+                                <a href="{% url 'checkup_report' appointment.id %}" class="btn btn-outline-info btn-sm">View Checkup Report</a>
+
                         {% endif %}
 
                     <form method="post" action="{% url 'reject_appointment' appointment.id %}" style="display:inline;">

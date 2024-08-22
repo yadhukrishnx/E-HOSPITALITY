@@ -36,4 +36,6 @@ urlpatterns = [
     path('doctor/appointments/reject/<int:appointment_id>/', views.reject_appointment_view, name='reject_appointment'),
     path('doctor/availability/', views.doctor_availability_view, name='doctor_availability'),
     path('doctor/checkup/<int:appointment_id>/', views.doctor_checkup, name='doctor_checkup'),
+    path('checkupreport/<int:appointment_id>/', views.checkup_report, name='checkup_report'),
+    path('download_checkup_report/<int:appointment_id>/', views.download_checkup_report, name='download_checkup_report'),
 ]

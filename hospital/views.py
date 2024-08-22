@@ -289,8 +289,9 @@ def reject_user(request, user_id):
 @login_required
 def doctor_appointments_view(request):
     user = request.user
+    checkup = CheckupDetails.objects.all()
     appointments = Appointment.objects.filter(doctor=user)
-    return render(request, 'doctor/doctor_appointments.html', {'appointments': appointments})
+    return render(request, 'doctor/doctor_appointments.html', {'appointments': appointments, 'checkup':checkup})
 
 @login_required
 def confirm_appointment_view(request, appointment_id):
@@ -351,7 +352,50 @@ def doctor_checkup(request, appointment_id):
         checkup.prescription = request.POST.get('prescription')
         checkup.next_visit_date = request.POST.get('next_visit_date')
         checkup.observations = request.POST.get('observations')
+        checkup.checkup_status = True
         checkup.save()
         return redirect('doctor_appointments')
         
     return render(request, 'doctor/checkup.html', {'appointment': appointment, 'checkup': checkup})
+
+
+
+@login_required
+def checkup_report(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    checkup = get_object_or_404(CheckupDetails, patient=appointment.patient, checkup_date=appointment.appointment_date)
+    appointment.status = 'confirmed'
+    context = {
+        'doctor_name': appointment.doctor.profile.name,
+        'department': appointment.doctor.profile.department,
+        'patient_name': appointment.patient.profile.name,
+        'patient_dob': appointment.dob,
+        'patient_phone': appointment.patient.profile.phone_no,
+        'patient_age': appointment.patient.profile.age,
+        'checkup_date': checkup.checkup_date,
+        'observations': checkup.observations,
+        'prescription': checkup.prescription,
+        'next_visit_date': checkup.next_visit_date,
+        'current_year': timezone.now().year,
+        'appointment': appointment
+    }
+    return render(request, 'checkup_report.html', context,)
+
+def download_checkup_report(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    checkup = get_object_or_404(CheckupDetails, patient=appointment.patient, checkup_date=appointment.appointment_date)
+    dict = {
+        'doctor_name': appointment.doctor.profile.name,
+        'department': appointment.doctor.profile.department,
+        'patient_name': appointment.patient.profile.name,
+        'patient_dob': appointment.dob,
+        'patient_phone': appointment.patient.profile.phone_no,
+        'patient_age': appointment.patient.profile.age,
+        'checkup_date': checkup.checkup_date,
+        'observations': checkup.observations,
+        'prescription': checkup.prescription,
+        'next_visit_date': checkup.next_visit_date,
+        'current_year': timezone.now().year,
+        'appointment': appointment,
+    }
+    return render_to_pdf('checkup_report.html',dict)
