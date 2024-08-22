@@ -80,18 +80,21 @@ class Appointment(models.Model):
     status = models.CharField(max_length=15, choices=APPOINTMENT_STATUS, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    payment_status = models.BooleanField(default=False)
+    
     def __str__(self):
         return f"Appointment with Dr. {self.doctor.profile.first_name} {self.doctor.profile.last_name} on {self.appointment_date.strftime('%Y-%m-%d %H:%M')}"
 
 
 class CheckupDetails(models.Model):
+    appointment = models.OneToOneField(Appointment, on_delete=models.CASCADE)
     patient = models.ForeignKey(User, on_delete=models.CASCADE)
-    prescription = models.TextField()
-    observations = models.TextField()
+    prescription = models.TextField(null=True)
+    observations = models.TextField(null=True)
     next_visit_date = models.DateField(null=True)
     checkup_status = models.BooleanField(null=True, default=False)
     checkup_date = models.DateField(auto_now_add=True)
+    
 
     def __str__(self):
         return f"Checkup for {self.patient.username} on {self.checkup_date}"

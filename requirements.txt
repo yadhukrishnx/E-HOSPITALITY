@@ -1,3 +1,4 @@
 django 
 django-crispy-forms
 xhtml2pdf
+stripe-10.8.0

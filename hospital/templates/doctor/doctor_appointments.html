@@ -41,6 +41,8 @@
                         <label class="badge badge-warning">Rescheduled</label>
                     {% elif appointment.status == 'cancelled' %}
                         <label class="badge badge-info">Cancelled</label>
+                    {% elif appointment.status == 'completed' %}
+                        <label class="badge badge-info">Completed</label>
                     {% endif %}
                 </td>
                   <td>
@@ -56,13 +58,10 @@
                     {% elif appointment.status == 'confirmed' %}
                 
                         <a class="btn btn-gradient-warning btn-sm"  href="{% url 'doctor_reschedule_appointment' appointment.id %}">Reschedule</a>
-                        {% if not checkup %}
+                        {% if checkup.checkup_status %}
                                 <a class="btn btn-outline-success btn-sm" href="{% url 'doctor_checkup' appointment.id %}">Check Up</a>
                         {% else %}
-
-                                <a class="btn btn-outline-warning btn-sm" href="{% url 'doctor_checkup' appointment.id %}">Update Check Up</a>
-                                <a href="{% url 'checkup_report' appointment.id %}" class="btn btn-outline-info btn-sm">View Checkup Report</a>
-
+                                <a class="btn btn-outline-info btn-sm" href="{% url 'doctor_checkup' appointment.id %}">CheckUp/Update</a>
                         {% endif %}
 
                     <form method="post" action="{% url 'reject_appointment' appointment.id %}" style="display:inline;">
@@ -71,6 +70,11 @@
                       </form>
                     {% else %}
                     <a class="btn btn-gradient-warning btn-sm" href="{% url 'doctor_reschedule_appointment' appointment.id %}">Reschedule</a>
+                    {% if checkup.checkup_status %}
+                                <a class="btn btn-outline-success btn-sm" href="{% url 'doctor_checkup' appointment.id %}">Check Up</a>
+                        {% else %}
+                        <a class="btn btn-outline-info btn-sm" href="{% url 'doctor_checkup' appointment.id %}">CheckUp/Update</a>
+                        {% endif %}
                     {% endif %}
 
                   </td>

@@ -24,6 +24,7 @@ urlpatterns = [
     path('tips/', views.patient_tips_view, name='tips'),
     path('nutrition/', views.download_nutrition_guide, name='download_nutrition_guide'),
     path('exercise/', views.download_exercise_plan, name='download_exercise_plan'),
+    path('make_payment/<int:appointment_id>/', views.make_payment, name='make_payment'),
     
     # Admin Related Urls
     path('admin-dashboard/approve/<int:user_id>/', views.approve_user, name='approve_user'),

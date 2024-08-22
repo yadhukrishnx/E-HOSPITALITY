@@ -214,22 +214,33 @@ def book_appointment_view(request, doctor_id):
     user_profile = get_object_or_404(UserProfile, user=user)
     doctor_profile = get_object_or_404(UserProfile, pk=doctor_id)
     doctor = doctor_profile.user
-    
+
     if request.method == 'POST':
+        # Create the appointment
         appointment = Appointment(
             patient=user,
             doctor=doctor,
             dob=request.POST.get('dob'),
             reason_for_visit=request.POST.get('reason'),
-            appointment_date=request.POST.get('appointment_date'),  
+            appointment_date=request.POST.get('appointment_date'),
             status='pending'  # Set default status to 'pending'
         )
         appointment.save()
-        messages.success(request, "Application for Appointment Submitted. Wait for approval from doctor.")
-        return redirect('appointments')
-    
-    return render(request, 'patient/bookappointment.html', {'doctor': doctor, 'user_profile': user_profile})
 
+        # Create CheckupDetails, ensuring all required fields are set
+        CheckupDetails.objects.create(
+            appointment=appointment,
+            patient=user,  # Ensure patient is set
+            prescription='',  # Assuming default values for optional fields
+            observations='',
+            next_visit_date=None,
+            checkup_status=False
+        )
+
+        messages.success(request, "Appointment has been successfully booked. Wait for approval from the doctor.")
+        return redirect('appointments')
+
+    return render(request, 'patient/bookappointment.html', {'doctor': doctor, 'user_profile': user_profile})
 
 @login_required
 def cancel_appointment_view(request, appointment_id):
@@ -376,9 +387,10 @@ def doctor_availability_view(request):
 def doctor_checkup(request, appointment_id):
     appointment = get_object_or_404(Appointment, id=appointment_id)
     checkup, created = CheckupDetails.objects.get_or_create(
-    patient=appointment.patient, 
-    checkup_date=appointment.appointment_date
-)
+        appointment=appointment,
+        defaults={'patient': appointment.patient}
+    )
+
 
     if request.method == 'POST':
         checkup.prescription = request.POST.get('prescription')
@@ -415,10 +427,14 @@ def checkup_report(request, appointment_id):
     }
     return render(request, 'checkup_report.html', context,)
 
+@login_required
 def download_checkup_report(request, appointment_id):
     appointment = get_object_or_404(Appointment, id=appointment_id)
-    checkup = get_object_or_404(CheckupDetails, patient=appointment.patient, checkup_date=appointment.appointment_date)
-    dict = {
+    checkup = get_object_or_404(CheckupDetails, appointment=appointment)
+    if appointment.payment_status:
+        return redirect('make_payment', appointment_id)
+    
+    dict = {    
         'doctor_name': appointment.doctor.profile.name,
         'department': appointment.doctor.profile.department,
         'patient_name': appointment.patient.profile.name,
@@ -433,3 +449,44 @@ def download_checkup_report(request, appointment_id):
         'appointment': appointment,
     }
     return render_to_pdf('checkup_report.html',dict)
+
+
+# Stripe payment gateway
+
+import stripe
+from django.urls import reverse
+
+
+def make_payment(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    
+    if request.method == 'POST':
+        appointment.payment_status = True
+        # Create the line item for the report with a fixed price of ₹200
+        line_item = {
+            'price_data': {
+                'currency': 'INR',
+                'unit_amount': 20000,  # ₹200 = 20000 paise
+                'product_data': {
+                    'name': 'Report Download',
+                },
+            },
+            'quantity': 1,
+        }
+
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[line_item],
+            mode='payment',
+            success_url=request.build_absolute_uri(reverse('checkup_report', args=[appointment_id ])),
+            cancel_url=request.build_absolute_uri(reverse('appointments')) + '?message=' + 'Payment+failed!',
+        )
+
+        return redirect(checkout_session.url, code=303)
+    if appointment.payment_status == True:
+        return redirect('download_checkup_report', appointment_id)
+    else:
+        return render(request, 'patient/make_payment.html', {'appointment': appointment})
+    
+   

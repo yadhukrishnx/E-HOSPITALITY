@@ -14,33 +14,55 @@
         }
         .report-container {
             width: 100%;
-            max-width: 600px;
+            max-width: 800px; /* Increased width for better readability */
             margin: 0 auto;
             background-color: #ffffff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 30px; /* Increased padding */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
         }
         .report-header {
             text-align: center;
-            padding-bottom: 20px;
+            padding-bottom: 30px; /* Increased padding */
         }
         .report-header img {
-            width: 200px;
+            width: 250px; /* Increased logo size */
         }
         .report-body {
             padding: 20px;
-            
-            line-height: 1.6;
+            line-height: 1.8; /* Increased line height */
         }
         .report-footer {
             text-align: center;
-            padding-top: 20px;
+            padding-top: 30px; /* Increased padding */
             color: #777;
+            font-size: 14px; /* Increased font size */
         }
         .divider {
             border-bottom: 1px solid #ddd;
             margin: 20px 0;
+        }
+        .payment-receipt {
+            padding: 20px;
+            background-color: #e9f5ff;
+            border: 1px solid #b3d4fc;
+            border-radius: 5px;
+            margin-bottom: 30px; /* Added margin */
+        }
+        .payment-receipt h3 {
+            margin-top: 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #dc3545;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background-color: #c82333;
         }
     </style>
 </head>
@@ -48,19 +70,21 @@
     <div class="report-container">
         <div class="report-header">
             <img src="https://raw.githubusercontent.com/haplle/image-host-temporary/main/logo.png" alt="Nuclear Hospital Logo">
-            <h2>Checkup Report</h2> 
-            
+            <h2>Checkup Report</h2>
             <hr>
         </div>
-        <div class="report-body"> 
-           <small>
-            <p ><strong>Doctor Name:</strong> {{ doctor_name }}</p>
+        <div class="payment-receipt">
+            <h3>Payment Receipt</h3>
+            <p><strong>Amount Paid:</strong> Rupees 200 only</p>
+            <p><strong>Payment Status:</strong> Successful</p>
+            <p><strong>Transaction ID:</strong> {{ transaction_id }}</p> <!-- Transaction ID placeholder -->
+        </div>
+        <div class="report-body">
+            <p><strong>Doctor Name:</strong> {{ doctor_name }}</p>
             <p><strong>Department:</strong> {{ department }}</p>
-   
             <p><strong>Patient Name:</strong> {{ patient_name }}</p>
-           
             <p><strong>Phone Number:</strong> {{ patient_phone }}</p>
-            <p><strong>Age:</strong> {{ patient_age }}</p></small>
+            <p><strong>Age:</strong> {{ patient_age }}</p>
             <div class="divider"></div>
             <p><strong>Checkup Date:</strong> {{ checkup_date }}</p>
             <p><strong>Observations:</strong> {{ observations }}</p>
@@ -68,13 +92,11 @@
             <p><strong>Next Visit Date:</strong> {{ next_visit_date }}</p>
         </div>
         <div class="report-footer">
-            <p>&copy; {{ current_year }} Nuclear Hospital. All rights reserved.</p>
+            <p>copy; {{ current_year }} Nuclear Hospital. All rights reserved.</p>
             <p>Address: Nuclear Hospital, Kakkanad, Kochi</p>
             <p>Phone: +91-1234567890</p>
-            <a href="{% url 'download_checkup_report' appointment.id %}" class="btn btn-danger">Download Checkup Report</a>
+            <a href="{% url 'download_checkup_report' appointment.id %}" class="btn">Download Checkup Report</a>
         </div>
     </div>
-    
-
 </body>
 </html>

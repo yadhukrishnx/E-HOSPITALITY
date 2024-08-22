@@ -1,0 +1,33 @@
+{% extends 'patient/dashboard.html' %}
+{% block content %}
+<div class="container">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h6 class="panel-title">Payment Request</h6>
+            <p>You need to pay 200 Rs as Consultation Fee to Download Report</p>
+        </div>
+        <div class="panel-body">
+            <form method="POST" >
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="appointment-id">Appointment ID:</label>
+                    <input type="text" class="form-control" id="appointment-id" value="{{ appointment.id }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="doctor-name">Doctor Name:</label>
+                    <input type="text" class="form-control" id="doctor-name" value="{{ appointment.doctor.profile.name }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="appointment-date">Appointment Date:</label>
+                    <input type="text" class="form-control" id="appointment-date" value="{{ appointment.appointment_date }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="consultation-fee">Consultation Fee:</label>
+                    <input type="text" class="form-control" id="consultation-fee" value="₹200" readonly>
+                </div>
+                <button type="submit" class="btn btn-primary">Proceed to Payment</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

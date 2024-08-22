@@ -50,7 +50,7 @@
             {% elif a.status == 'cancelled' %}
               <a href="{% url 'reschedule_appointment' a.id %}" class="btn btn-warning btn-sm">Reschedule</a>
             {% elif a.status == 'completed' %}
-              <a href="{% url 'download_checkup_report' a.id %}" class="btn btn-outline-success btn-sm">Download Report</a>
+              <a href="{% url 'download_checkup_report' a.id %}" class="btn btn-outline-success btn-sm">Download Report <i><i class="fa fa-download"></i></i> </a>
 
             {% endif %}
         </td>
