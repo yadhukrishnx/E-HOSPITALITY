@@ -64,7 +64,6 @@ class Appointment(models.Model):
     patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appointments_as_patient',limit_choices_to={'user_type': 'patient'})
     doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appointments_as_doctor', limit_choices_to={'user_type': 'doctor'})
 
-    
     dob = models.DateField(null=True)
     appointment_date = models.DateTimeField(null=True)
     reason_for_visit = models.TextField(blank=True, null=True)

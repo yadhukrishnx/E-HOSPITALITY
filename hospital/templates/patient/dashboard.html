@@ -108,13 +108,13 @@
               </a>
             
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <a class="nav-link" data-bs-toggle="collapse" href="{% url 'discharge' %}" aria-expanded="false" aria-controls="forms">
                 <span class="menu-title">Discharge</span>
                 <i class="mdi mdi-format-list-bulleted menu-icon"></i>
               </a>
              
-            </li>
+            </li> -->
             <li class="nav-item">
               <a class="nav-link" data-bs-toggle="collapse" href="{% url 'tips' %}" aria-expanded="false" aria-controls="forms">
                 <span class="menu-title">Health Tips/Resources</span>
@@ -159,17 +159,17 @@
               <div class="col-md-4 stretch-card grid-margin">
                 <div class="card bg-gradient-info card-img-holder text-white">
                   <div class="card-body">
-                    <h3>Admit date : </h3>
-                    <h5>Symptoms : </h5>
-                    <h5>Discharge : </h5>
+                    <h3>Appointment to : {{doctor_name}} </h3>
+                    <h5>Department : {{ department }} </h5>
+                    <h5 class="card-title">Date : {{ appointment_date }}</h5>
                   </div>
                 </div>
               </div>
               <div class="col-md-4 stretch-card grid-margin">
                 <div class="card bg-gradient-success card-img-holder text-white">
                   <div class="card-body">
-                   <h3>Bill status : </h3>
-                   <h5>Bill amount : </h5>
+                   <h3>Appointment status : {{ appointment_status }} </h3>
+                   <h5>Created on : {{ created_on }} </h5>
                   </div>
                 </div>
               </div>

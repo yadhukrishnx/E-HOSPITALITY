@@ -118,17 +118,38 @@ def update_profile(request):
 def patient_dashboard_view(request):
     user = request.user
     user_profile = get_object_or_404(UserProfile, user=user)
+    appointment = get_object_or_404(Appointment, patient=user)
+
+    
+    dict = {
+        'doctor_name': appointment.doctor.profile.name,
+        'department': appointment.doctor.profile.department,
+        'patient_name': appointment.patient.profile.name,
+        'patient_dob': appointment.dob,
+        'patient_phone': appointment.patient.profile.phone_no,
+        'patient_age': appointment.patient.profile.age,
+        'appointment_status' : appointment.status,
+        'created_on': appointment.created_at,
+        'appointment_date': appointment.appointment_date,
+        'current_year': timezone.now().year,
+        'appointment': appointment,
+        'user_profile': user_profile ,
+        'doctors':doctors
+    }
     doctors = UserProfile.objects.filter(user_type='doctor')
     if user_profile.name == None or user_profile.name == '' or user_profile.address == None :
         return redirect('update_profile')
-    return render(request, 'patient/dashboard.html',{'user_profile': user_profile ,'doctors':doctors})
+    
+    return render(request, 'patient/dashboard.html',dict)
 
 
 @login_required
 def doctor_dashboard_view(request):
     user = request.user
     user_profile = get_object_or_404(UserProfile, user=user)
-    
+    # Check if user profile is complete
+    if user_profile.name == None or user_profile.name == '' or user_profile.address == None :
+        return redirect('update_profile')
     # Calculate today's date
     today = timezone.now().date()
     
@@ -172,9 +193,11 @@ def admin_dashboard_view(request):
 @login_required
 def patient_appointments_view(request):
     user = request.user
+    user_profile = get_object_or_404(UserProfile, user=user)
     appointments = Appointment.objects.filter(patient=user)
     context = {
-        'appointments':appointments
+        'appointments':appointments,
+        'user_profile': user_profile
     }
     return render(request, 'patient/appointments.html',context)
 @login_required
@@ -289,9 +312,10 @@ def reject_user(request, user_id):
 @login_required
 def doctor_appointments_view(request):
     user = request.user
+    user_profile = get_object_or_404(UserProfile, user=user)
     checkup = CheckupDetails.objects.all()
     appointments = Appointment.objects.filter(doctor=user)
-    return render(request, 'doctor/doctor_appointments.html', {'appointments': appointments, 'checkup':checkup})
+    return render(request, 'doctor/doctor_appointments.html', {'appointments': appointments, 'checkup':checkup, 'user_profile': user_profile})
 
 @login_required
 def confirm_appointment_view(request, appointment_id):
