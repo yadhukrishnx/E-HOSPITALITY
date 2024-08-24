@@ -2,7 +2,10 @@
 
 **E-Hospitality** is a comprehensive healthcare management solution designed to streamline the operations of patients, administrators, and medical professionals 
 
-<img src="https://raw.githubusercontent.com/haplle/image-host-temporary/main/logo.png" alt="Nuclear Hospital Logo" class="logo">
+# Features 
+Stripe implementation for secure payment
+xhtml2pdf for downloading patient report 
+mail system
 
 ## Installation
 
